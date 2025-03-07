@@ -10,4 +10,4 @@ const validatingUserRegistration = (data) => {
   return schema.validate(data);
 };
 
-module.exports = validatingUserRegistration;
+module.exports = { validatingUserRegistration };

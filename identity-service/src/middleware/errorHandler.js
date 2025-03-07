@@ -1,6 +1,6 @@
 const logger = require("../utils/logger");
 
-const errorHandler = (req, res, next, error) => {
+const errorHandler = (error, req, res, next) => {
   logger.error(error.stack);
   res
     .status(error.status || 500)

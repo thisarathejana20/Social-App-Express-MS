@@ -1,7 +1,7 @@
 const express = require("express");
 const { registerUser } = require("../controllers/identityController");
 
-const router = express.Router();
+const authRouter = express.Router();
 
 // Define a GET route to retrieve all records
 
@@ -12,6 +12,6 @@ const router = express.Router();
 // router.get("/:id");
 
 // Define a POST route to create a new record
-router.post("/register", registerUser);
+authRouter.post("/register", registerUser);
 
-module.exports = router;
+module.exports = authRouter;
