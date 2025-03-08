@@ -1,5 +1,6 @@
 const mongoose = require("mongoose");
 const argon2 = require("argon2");
+const logger = require("../utils/logger");
 
 const userSchema = new mongoose.Schema(
   {
@@ -49,11 +50,11 @@ userSchema.method.comparePassword = async function (candidatePasswords) {
   try {
     return await argon2.verify(this.password, candidatePasswords);
   } catch (error) {
-    console.error("Error comparing passwords:", error);
+    log.error("Error verifying password");
     return false;
   }
 };
 
-userSchema.index({ ussername: "text" });
+userSchema.index({ username: "text" });
 
 module.exports = mongoose.model("User", userSchema);

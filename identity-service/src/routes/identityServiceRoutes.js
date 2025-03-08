@@ -1,17 +1,16 @@
 const express = require("express");
-const { registerUser } = require("../controllers/identityController");
+const {
+  registerUser,
+  loginUser,
+  refreshToken,
+  logOutUser,
+} = require("../controllers/identityController");
 
 const authRouter = express.Router();
 
-// Define a GET route to retrieve all records
-
-// router.get("/", );
-
-// Define a GET route to retrieve a single record by ID
-
-// router.get("/:id");
-
-// Define a POST route to create a new record
+authRouter.post("/login", loginUser);
 authRouter.post("/register", registerUser);
+authRouter.post("/refresh-token", refreshToken);
+authRouter.post("/logout", logOutUser);
 
 module.exports = authRouter;
