@@ -8,6 +8,7 @@ const { RedisStore } = require("rate-limit-redis");
 const logger = require("./utils/logger");
 const proxy = require("express-http-proxy");
 const errorHandler = require("./middleware/errorHandler");
+const { validateToken } = require("./utils/authMiddleware");
 
 const app = express();
 
@@ -78,9 +79,33 @@ app.use(
 );
 
 // setting up proxy for post service
+app.use(
+  "/v1/posts",
+  validateToken,
+  proxy(process.env.POST_SERVICE_URL, {
+    ...proxyOptions,
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+      proxyReqOpts.headers["Content-Type"] = "application/json";
+      // now here we need the user id set to headers. because in the post service we access it from the headers
+      // here srcReq is populated with current req object. because of previous middleware validateToken req object has user information
+      proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+      return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+      logger.info(
+        `Response received from Post Server : ${proxyRes.statusCode}`
+      );
+      return proxyResData;
+    },
+  })
+);
 
 app.use(errorHandler);
 
 app.listen(PORT, () => {
   logger.info(`API gateway is running on port: ${PORT}`);
+  logger.info(
+    `Identity Service is running on: ${process.env.IDENTITY_SERVICE_URL}`
+  );
+  logger.info(`Post Service is running on: ${process.env.POST_SERVICE_URL}`);
 });

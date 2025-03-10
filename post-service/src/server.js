@@ -31,7 +31,7 @@ app.use((req, res, next) => {
 
 // routes
 app.use(
-  "api/posts",
+  "/api/posts",
   (req, res, next) => {
     req.redisClient = redisClient;
     next();
