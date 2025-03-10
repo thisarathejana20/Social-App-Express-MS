@@ -7,3 +7,5 @@ const postRouter = express.Router();
 postRouter.use(authenticationRequest);
 
 postRouter.post("/", createPost);
+
+module.exports = postRouter;

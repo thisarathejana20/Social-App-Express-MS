@@ -77,6 +77,8 @@ app.use(
   })
 );
 
+// setting up proxy for post service
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
