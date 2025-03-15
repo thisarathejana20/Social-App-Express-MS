@@ -1,3 +1,4 @@
+const { json } = require("express");
 const Post = require("../models/Post");
 const logger = require("../utils/logger");
 const { invalidateGetPosts } = require("../utils/redisHelper");
@@ -34,20 +35,6 @@ const createPost = async (req, res, next) => {
   }
 };
 
-const getAll = async (req, res, next) => {
-  try {
-    const posts = await Post.find({});
-    res.json(posts);
-  } catch (error) {
-    logger.error("Error retrieving posts", error);
-    res.status(500).json({
-      success: false,
-      message: "Failed to retrieve posts",
-      error: error.message,
-    });
-  }
-};
-
 const getPost = async (req, res, next) => {
   try {
     const postId = req.params.id;
@@ -64,6 +51,8 @@ const getPost = async (req, res, next) => {
         message: "Post not found",
       });
     }
+
+    await req.redisClient.setex(cacheKey, 3600, json.stringify(post));
     res.json(post);
   } catch (error) {
     logger.error("Error retrieving post", error);
@@ -77,7 +66,19 @@ const getPost = async (req, res, next) => {
 
 const deletePost = async (req, res) => {
   try {
-    await Post.findByIdAndDelete(req.params.id);
+    const post = await Post.findOneAndDelete({
+      _id: req.params.id,
+      user: req.user.userId,
+    });
+
+    if (!post) {
+      return res.status(404).json({
+        success: false,
+        message: "Post not found",
+      });
+    }
+
+    await invalidateGetPosts(req, req.params.id);
     res.json({ success: true, message: "Post deleted" });
   } catch (error) {
     logger.error("Error deleting post", error);
@@ -127,4 +128,4 @@ const getAllPosts = async (req, res) => {
   }
 };
 
-module.exports = { getAllPosts, createPost, getAll, getPost, deletePost };
+module.exports = { getAllPosts, createPost, getPost, deletePost };

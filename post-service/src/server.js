@@ -6,7 +6,7 @@ const cors = require("cors");
 const logger = require("./utils/logger");
 const connectToDatabase = require("./database/mongoConnect");
 const postRouter = require("./routes/postRoute");
-const errorHandler = require("./utils/errorHandler");
+const errorHandler = require("./middleware/errorHandler");
 
 const app = express();
 
