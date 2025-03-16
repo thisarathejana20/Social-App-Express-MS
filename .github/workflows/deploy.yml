@@ -29,5 +29,17 @@ jobs:
 
       - name: Build and push Docker Image
         run: |
+          echo "REDIS_URL=${{ secrets.REDIS_URL }}" > .env
+          echo "RABBITMQ_URL=${{ secrets.RABBITMQ_URL }}" >> .env
+          echo "MONGO_URL=${{ secrets.MONGO_URL }}" >> .env
+          echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
+          echo "IDENTITY_SERVICE_URL=${{ secrets.IDENTITY_SERVICE_URL }}" >> .env
+          echo "POST_SERVICE_URL=${{ secrets.POST_SERVICE_URL }}" >> .env
+          echo "MEDIA_SERVICE_URL=${{ secrets.MEDIA_SERVICE_URL }}" >> .env
+          echo "SEARCH_SERVICE_URL=${{ secrets.SEARCH_SERVICE_URL }}" >> .env
+          echo "CLOUDINARY_NAME=${{ secrets.CLOUDINARY_NAME }}" >> .env
+          echo "CLOUDINARY_API_KEY=${{ secrets.CLOUDINARY_API_KEY }}" >> .env
+          echo "CLOUDINARY_API_SECRET=${{ secrets.CLOUDINARY_API_SECRET }}" >> .env
+
           docker compose -f docker-compose.yml build
           docker compose -f docker-compose.yml push
