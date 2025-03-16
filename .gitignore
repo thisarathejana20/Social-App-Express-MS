@@ -31,9 +31,5 @@ Thumbs.db
 # Test coverage
 coverage/
 
-# Package lock file for npm/yarn (optional, depends on your workflow)
-package-lock.json
-yarn.lock
-
 # Ignore debug files
 debug.log
