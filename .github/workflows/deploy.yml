@@ -27,7 +27,7 @@ jobs:
           username: ${{ secrets.DOCKER_HUB_USERNAME }}
           password: ${{ secrets.DOCKER_HUB_ACCESS_TOKEN }}
 
-      - name: Build and push Docker Image
+      - name: Build Docker Image
         run: |
           echo "REDIS_URL=${{ secrets.REDIS_URL }}" > .env
           echo "RABBITMQ_URL=${{ secrets.RABBITMQ_URL }}" >> .env

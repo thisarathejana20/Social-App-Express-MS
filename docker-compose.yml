@@ -3,6 +3,7 @@ version: '1.0.0'
 services:
   api-gateway:
     build: ./api-gateway
+    image: ${ DOCKER_HUB_USERNAME }/api-gateway
     ports:
       - 3000:3000
     env_file:
@@ -16,6 +17,7 @@ services:
 
   identity-service:
     build: ./identity-service
+    image: ${ DOCKER_HUB_USERNAME }/identity-service
     env_file:
       - .env
     depends_on:
@@ -27,6 +29,7 @@ services:
 
   post-service:
     build: ./post-service
+    image: ${ DOCKER_HUB_USERNAME }/post-service
     env_file:
       - .env
     depends_on:
@@ -38,6 +41,7 @@ services:
 
   media-service:
     build: ./media-service
+    image: ${ DOCKER_HUB_USERNAME }/media-service
     env_file:
       - .env
     depends_on:
@@ -49,6 +53,7 @@ services:
 
   search-service:
     build: ./search-service
+    image: ${ DOCKER_HUB_USERNAME }/search-service
     env_file:
       - .env
     depends_on:
