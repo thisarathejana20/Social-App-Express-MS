@@ -122,6 +122,25 @@ app.use(
   })
 );
 
+app.use(
+  "/v1/search",
+  validateToken,
+  proxy(process.env.SEARCH_SERVICE_URL, {
+    ...proxyOptions,
+    proxyReqOptDecorator: (proxyReqOpts, srcReq) => {
+      proxyReqOpts.headers["x-user-id"] = srcReq.user.userId;
+      proxyReqOpts.headers["Content-Type"] = "application/json";
+      return proxyReqOpts;
+    },
+    userResDecorator: (proxyRes, proxyResData, userReq, userRes) => {
+      logger.info(
+        `Response received from Identity Server : ${proxyRes.statusCode}`
+      );
+      return proxyResData;
+    },
+  })
+);
+
 app.use(errorHandler);
 
 app.listen(PORT, () => {
@@ -131,4 +150,7 @@ app.listen(PORT, () => {
   );
   logger.info(`Post Service is running on: ${process.env.POST_SERVICE_URL}`);
   logger.info(`Media Service is running on: ${process.env.MEDIA_SERVICE_URL}`);
+  logger.info(
+    `Search Service is running on: ${process.env.SEARCH_SERVICE_URL}`
+  );
 });

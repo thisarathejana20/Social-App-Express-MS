@@ -26,6 +26,14 @@ const createPost = async (req, res, next) => {
     // invalidate old redis cache
     invalidateGetPosts(req, post);
 
+    // publish event to notify other services
+    await publishEvent("post.created", {
+      postId: post._id.toString(),
+      userId: req.user.userId,
+      content: post.content,
+      createdAt: post.createdAt,
+    });
+
     logger.info("Post created successfully");
     res.status(201).json({ success: true, message: "Success" });
   } catch (error) {
