@@ -7,6 +7,7 @@ const logger = require("./utils/logger");
 const connectToDatabase = require("./database/mongoConnect");
 const postRouter = require("./routes/postRoute");
 const errorHandler = require("./middleware/errorHandler");
+const { connectToRabbitMQ } = require("./utils/rabbitmq");
 
 const app = express();
 
@@ -43,9 +44,20 @@ app.use(errorHandler);
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => {
-  logger.info(`Post Service Server running on port ${PORT}`);
-});
+// start rabbitmq server along with express server
+const startServer = async () => {
+  try {
+    await connectToRabbitMQ();
+    app.listen(PORT, () => {
+      logger.info(`Post Service Server running on port ${PORT}`);
+    });
+  } catch (error) {
+    logger.error("Failed to connect to server:", error);
+    process.exit(1);
+  }
+};
+
+startServer();
 
 //unhandled promises
 process.on("unhandledRejection", (reason, promise) => {

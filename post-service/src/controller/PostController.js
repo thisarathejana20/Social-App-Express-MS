@@ -3,6 +3,8 @@ const Post = require("../models/Post");
 const logger = require("../utils/logger");
 const { invalidateGetPosts } = require("../utils/redisHelper");
 const validateCreatePost = require("../utils/validation");
+const { publishEvent } = require("../utils/rabbitmq");
+const { mongoose } = require("mongoose");
 
 const createPost = async (req, res, next) => {
   // validate
@@ -12,9 +14,10 @@ const createPost = async (req, res, next) => {
     return res.status(400).json({ success: false, message: error.message });
   }
   try {
-    const { content, mediaIds } = req.body;
+    const { content, mediaIds, title } = req.body;
     const post = new Post({
-      user: req.user.userId,
+      title,
+      author: req.user.userId,
       content,
       mediaIds: mediaIds || [],
     });
@@ -52,7 +55,7 @@ const getPost = async (req, res, next) => {
       });
     }
 
-    await req.redisClient.setex(cacheKey, 3600, json.stringify(post));
+    await req.redisClient.setex(cacheKey, 3600, JSON.stringify(post));
     res.json(post);
   } catch (error) {
     logger.error("Error retrieving post", error);
@@ -68,7 +71,7 @@ const deletePost = async (req, res) => {
   try {
     const post = await Post.findOneAndDelete({
       _id: req.params.id,
-      user: req.user.userId,
+      author: new mongoose.Types.ObjectId(req.user.userId),
     });
 
     if (!post) {
@@ -77,6 +80,13 @@ const deletePost = async (req, res) => {
         message: "Post not found",
       });
     }
+
+    // publish an event to rabbitMQ server that delete the media associated with the post
+    await publishEvent("post.deleted", {
+      postId: post._id.toString(),
+      userId: req.user.userId,
+      mediaIds: post.mediaIds,
+    });
 
     await invalidateGetPosts(req, req.params.id);
     res.json({ success: true, message: "Post deleted" });

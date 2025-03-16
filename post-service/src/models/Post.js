@@ -9,7 +9,7 @@ const postSchema = new mongoose.Schema(
       ref: "User",
       required: true,
     },
-    mediaIds: { type: String },
+    mediaIds: [{ type: String }],
     createdAt: { type: Date, default: Date.now },
   },
   {

@@ -14,6 +14,6 @@ postRouter.use(authenticationRequest);
 postRouter.post("/", createPost);
 postRouter.get("/", getAllPosts);
 postRouter.get("/:id", getPost);
-postRouter.get("/:id", deletePost);
+postRouter.delete("/:id", deletePost);
 
 module.exports = postRouter;
