@@ -6,7 +6,7 @@ services:
     ports:
       - 3000:3000
     env_file:
-      - ./api-gateway/.env
+      - .env
     depends_on:
       - redis
       - rabbitmq
@@ -17,7 +17,7 @@ services:
   identity-service:
     build: ./identity-service
     env_file:
-      - ./identity-service/.env
+      - .env
     depends_on:
       - redis
       - rabbitmq
@@ -28,7 +28,7 @@ services:
   post-service:
     build: ./post-service
     env_file:
-      - ./post-service/.env
+      - .env
     depends_on:
       - redis
       - rabbitmq
@@ -39,7 +39,7 @@ services:
   media-service:
     build: ./media-service
     env_file:
-      - ./media-service/.env
+      - .env
     depends_on:
       - redis
       - rabbitmq
@@ -50,7 +50,7 @@ services:
   search-service:
     build: ./search-service
     env_file:
-      - ./search-service/.env
+      - .env
     depends_on:
       - redis
       - rabbitmq
